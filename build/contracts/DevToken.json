@@ -4714,14 +4714,41 @@
   },
   "networks": {
     "5777": {
-      "events": {},
+      "events": {
+        "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Transfer",
+          "type": "event"
+        }
+      },
       "links": {},
-      "address": "0xB38df8394368e716Dc1849Ea6200EFD18240E959",
-      "transactionHash": "0xd0bd07f3566ec562caf83cdef9c946ddde9dd946430a036693b4a38ed164751a"
+      "address": "0xA938F59c5386717a0190Bc17df24686e6925423A",
+      "transactionHash": "0x5064836768f088df4c1d264a02b8b5b402a4e1fe1282e01a4066715d37ba2ba6"
     }
   },
   "schemaVersion": "3.4.3",
-  "updatedAt": "2021-10-20T17:06:54.356Z",
+  "updatedAt": "2021-10-21T13:53:26.972Z",
+  "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",
     "methods": {},
