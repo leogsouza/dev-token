@@ -74,4 +74,50 @@ contract DevToken {
   function totalSupply() external view returns (uint256) {
     return _totalSupply;
   }
+
+  /**
+   * @notice balanceOf will return the acount balance for the given account
+   */
+  function balanceOf(address account) external view returns (uint256) {
+    return _balances[account];
+  }
+
+  /**
+   * @notice mint will create tokens on the address inputted and then increase the total supply
+   *
+   * It will also emit an Transfer event, with sender set to zero address (address(0))
+   * 
+   * Requires that the address that is receiving the tokens is not zero address
+   */
+  function mint(address account, uint256 amount) public {
+    require(account != address(0), "DevToken: cannot mint to zero address" );
+
+    // Increase total supply
+    _totalSupply = _totalSupply + (amount);
+    // Add amount to the ccount balance using the balance mapping
+    _balances[account] = _balances[account] + amount;
+    // Emit our event to log the action
+    emit Transfer(address(0),account, amount);
+  }
+
+  /**
+   * @notice burn will destroy tokens from an address inputted and then decrease total supply
+   * An Transfer event will emit with receiver set to zero address
+   *
+   * Requires
+   * - Account cannot be zero
+   * - Account balance has to be bigger or equal to amount
+   */
+   function burn(address account, uint256 amount) public {
+     require(account != address(0), "DevToken: cannot burn from zero address");
+     require(_balances[account] >= amount, "DevToken: cannot burn more than the account owns");
+
+     // Remove the amount from the account balance
+     _balances[account] = _balances[account] - amount;
+     // Decrease totalSupply
+     _totalSupply = _totalSupply - amount;
+     // emit event, use zero address as receiver
+     emit Transfer(account, address(0), amount);
+
+   }
 }
