@@ -59,7 +59,7 @@ contract("DevToken", async accounts => {
     try {
       await devToken.burn(accounts[1], initial_balance+initial_balance);
     } catch (error) {
-      assert.equal(error.reason, "DevToken: Cannot burn more than the account owns", "Failed to capture too big burns on an account")
+      assert.equal(error.reason, "DevToken: cannot burn more than the account owns", "Failed to capture too big burns on an account")
     }
 
     let totalSupply = await devToken.totalSupply();
