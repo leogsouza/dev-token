@@ -80,4 +80,36 @@ contract("DevToken", async accounts => {
     assert.equal(newSupply.toNumber(), totalSupply.toNumber()-50, "Total supply not properly reduced");
   })
 
+  it('trasfering tokens', async () => {
+    devToken = await DevToken.deployed();
+
+    // Grab initial balance
+    let initial_balance = await devToken.balanceOf(accounts[1]);
+
+    // transfer tokens from account 0 to 1
+    await devToken.transfer(accounts[1], 100);
+
+    let after_balance = await devToken.balanceOf(accounts[1]);
+
+    assert.equal(after_balance.toNumber(), initial_balance.toNumber() + 100, "Balance should have increased on receiver" )
+
+    // We can change the msg.sender using the FROM value in function calls.
+    let account2_initial_balance = await devToken.balanceOf(accounts[2]);
+
+    await devToken.transfer(accounts[2], 20, { from: accounts[1]});
+    // Make sure balances are switched on both accounts
+    let account2_after_balance = await devToken.balanceOf(accounts[2]);
+    let account1_after_balance = await devToken.balanceOf(accounts[1]);
+
+    assert.equal(account1_after_balance.toNumber(), after_balance.toNumber()-20, "Should have reduced account 1 balance by 20");
+    assert.equal(account2_after_balance.toNumber(), account2_initial_balance.toNumber()+20, "Should have given accounts 2 20 tokens");
+
+    // Try transfering too much
+    try {
+      await devToken.transfer(accounts[2], 2000000000000, { from: accounts[1]});      
+    } catch (error) {
+      assert.equal(error.reason, "DevToken: can't transfer more than your account holds");
+    }
+  })
+
 })

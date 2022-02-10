@@ -108,16 +108,55 @@ contract DevToken {
    * - Account cannot be zero
    * - Account balance has to be bigger or equal to amount
    */
-   function burn(address account, uint256 amount) public {
-     require(account != address(0), "DevToken: cannot burn from zero address");
-     require(_balances[account] >= amount, "DevToken: cannot burn more than the account owns");
+  function burn(address account, uint256 amount) public {
+    require(account != address(0), "DevToken: cannot burn from zero address");
+    require(_balances[account] >= amount, "DevToken: cannot burn more than the account owns");
 
-     // Remove the amount from the account balance
-     _balances[account] = _balances[account] - amount;
-     // Decrease totalSupply
-     _totalSupply = _totalSupply - amount;
-     // emit event, use zero address as receiver
-     emit Transfer(account, address(0), amount);
+    // Remove the amount from the account balance
+    _balances[account] = _balances[account] - amount;
+    // Decrease totalSupply
+    _totalSupply = _totalSupply - amount;
+    // emit event, use zero address as receiver
+    emit Transfer(account, address(0), amount);
 
-   }
+  }
+
+   /**
+    * @notice transfer is used to transfer funds from the sender to the recipient.
+    * This function is only callable from outside the contract. For internal use see
+    * _transfer
+    *
+    * Requires
+    * - Caller cannot be zero
+    * - Caller must have a balance = or bigger than amount
+    * 
+    */
+  function transfer(address recipient, uint256 amount) external returns (bool) {
+    _transfer(msg.sender, recipient, amount);
+    return true;
+  }
+
+  /**
+   * @notice transfer is used for internal transfers
+   *
+   * Events
+   * - Transfer
+   *
+   * Requires
+   * - Sender cannot be zero
+   * - recipient cannot be zero
+   * - sender balance must be = or bigger thant amount
+  */
+  function _transfer(address sender, address recipient, uint256 amount) internal {
+    require(sender != address(0), "DevToken: transfer from zero address");
+    require(recipient != address(0), "DevToken: transfer to zero address");
+    require(_balances[sender] >= amount, "DevToken: can't transfer more than your account holds");
+
+    _balances[sender] = _balances[sender] - amount;
+    _balances[recipient] = _balances[recipient] + amount;
+
+    emit Transfer(sender, recipient, amount);
+  }
+
+
 }
