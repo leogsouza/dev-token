@@ -112,4 +112,54 @@ contract("DevToken", async accounts => {
     }
   })
 
+  it('allow account some allowance', async () => {
+    devToken = await DevToken.deployed();
+
+    try {
+      // Give account(0) access to 100 tokens on creator
+      await devToken.approve('0x0000000000000000000000000000000000000000', 100);
+    } catch (error) {
+      assert.equal(error.reason, 'DevToken: approve cannot be done to zero address', 'Should be able to approve zero address');
+    }
+
+    try {
+      // Give account 1 access too 100 tokens on zero accounts
+      await devToken.approve(accounts[1], 100);
+    } catch (error) {
+      assert.fail(error); // should not fail
+    }
+
+    // Verify by checking allowance
+    let allowance = await devToken.allowance(accounts[0], accounts[1]);
+
+    assert.equal(allowance.toNumer(), 100, 'Allowance was not correctly inserted');
+  })
+
+  it('transfering with allowance', async () => {
+    devToken = await DevToken.deployed();
+
+    try {
+      // Account 1 should have 100 tokens by now to use on account 0
+      // lets try using more
+      await devToken.transferFrom(accounts[0], accounts[2], 200, { from: accounts[1]});
+    } catch (error) {
+      assert.equal(error.reason, 'DevToken: You cannot spend that much on this account', 'Failed to detect overspending')
+    }
+
+    let init_allowance = await devToken.allowance(accounts[0], accounts[1]);
+    console.log('init balance: ', init_allowance.toNumber());
+
+    try {
+      // Account 1 should have 100 tokens by now to use on account 0
+      // lets try using more
+      let worked = await devToken.transferFrom(accounts[0], accounts[1], 50, { from: accounts[1]});
+    } catch (error) {
+      assert.fail(error);
+    }
+
+    // Make sure allowance was changed
+    let allowance = await devToken.allowance(accounts[0], accounts[1]);
+    assert.equal(allowance.toNumber(), 50, 'The allowance should have been decreased by 50')
+  })
+
 })
